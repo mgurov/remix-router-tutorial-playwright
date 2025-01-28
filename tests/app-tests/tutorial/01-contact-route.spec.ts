@@ -51,16 +51,6 @@ test('should show inline error when failed loading contacts', async ({ page }) =
 
 });
 
-
-test('can open contact', async ({ page }) => {
-  await page.route('/api/contacts', route => route.fulfill({json: []}))
-
-  await page.goto('/contacts/1');
-
-  await expect(page.getByText("React Router Contacts")).toBeVisible();
-  await expect(page.getByAltText("Your Name avatar")).toBeVisible();
-});
-
 test('can open about', async ({ page }) => {
   await page.goto('/about');
 
@@ -78,6 +68,15 @@ test('can navigate to about', async ({ page }) => {
   await page.waitForURL('/about')
 
   await expect(page.getByText("About React Router Contacts")).toBeVisible();
+});
+
+test('can open contact', async ({ page }) => {
+  await page.route('/api/contacts', route => route.fulfill({json: []}))
+
+  await page.goto('/contacts/1');
+
+  await expect(page.getByText("React Router Contacts")).toBeVisible();
+  await expect(page.getByAltText("Your Name avatar")).toBeVisible();
 });
 
 test('can navigate to contact', async ({ page }) => {
@@ -110,4 +109,36 @@ test('can navigate to contact', async ({ page }) => {
   await expect(page.locator("div#contact")).toContainText("Fname Lname")
   await expect(page.locator("div#contact")).toContainText("Something special about this contact")
 });
+
+test('should show error on fetching a contact', async ({ page }) => {
+  await page.route('/api/contacts', route => route.fulfill({json: [
+    {
+      id: 'abcdef_gid',
+      avatar:
+        "https://placecats.com/200/200",
+      first: "Fname",
+      last: "Lname",
+    },  
+  ]}))
+
+  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({json:
+    {
+      id: 'abcdef_gid',
+      avatar: "https://placecats.com/200/200",
+      first: "Fname",
+      last: "Lname",
+      notes: "Something special about this contact"
+    },  
+  }))
+
+  await page.goto('/');
+
+  await page.locator("div#sidebar").getByText("Fname Lname").click()
+
+  await page.waitForURL('/contacts/abcdef_gid')
+
+  await expect(page.locator("div#contact")).toContainText("Fname Lname")
+  await expect(page.locator("div#contact")).toContainText("Something special about this contact")
+});
+
 
