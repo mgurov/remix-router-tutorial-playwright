@@ -81,3 +81,23 @@ test('can navigate to about', async ({ page }) => {
   await expect(page.getByText("About React Router Contacts")).toBeVisible();
 });
 
+test('can navigate to contact', async ({ page }) => {
+  await page.route('/api/contacts', route => route.fulfill({json: [
+    {
+      id: 'abcdef_gid',
+      avatar:
+        "https://sessionize.com/image/124e-400o400o2-wHVdAuNaxi8KJrgtN3ZKci.jpg",
+      first: "Shruti",
+      last: "Kapoor",
+    },  
+  ]}))
+
+  await page.goto('/');
+
+  await page.locator("div#sidebar").getByText("Shruti Kapoor").click()
+
+  await page.waitForURL('/contacts/abcdef_gid')
+
+  await expect(page.getByText("About React Router Contacts")).toBeVisible();
+});
+
