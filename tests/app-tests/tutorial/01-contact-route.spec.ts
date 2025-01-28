@@ -2,7 +2,7 @@ import test, { expect } from "@playwright/test";
 
 test('can open root page', async ({ page }) => {
 
-  await page.route('/api/contacts', route => route.fulfill({json: []}))
+  await page.route('/api/contacts', route => route.fulfill({ json: [] }))
 
   await page.goto('/');
 
@@ -14,13 +14,15 @@ test('can open root page', async ({ page }) => {
 
 test('can see contacts on the side bar', async ({ page }) => {
 
-  await page.route('/api/contacts', route => route.fulfill({json: [
-    {
-      avatar: "https://placecats.com/200/200",
-      first: "Fname",
-      last: "Lname",
-    },  
-  ]}));
+  await page.route('/api/contacts', route => route.fulfill({
+    json: [
+      {
+        avatar: "https://placecats.com/200/200",
+        first: "Fname",
+        last: "Lname",
+      },
+    ]
+  }));
 
   await page.goto('/');
 
@@ -30,7 +32,7 @@ test('can see contacts on the side bar', async ({ page }) => {
 
 test('No contacts on the side bar when contact list is empty', async ({ page }) => {
 
-  await page.route('/api/contacts', route => route.fulfill({json: []}))
+  await page.route('/api/contacts', route => route.fulfill({ json: [] }))
 
   await page.goto('/');
 
@@ -59,7 +61,7 @@ test('can open about', async ({ page }) => {
 
 
 test('can navigate to about', async ({ page }) => {
-  await page.route('/api/contacts', route => route.fulfill({json: []}))
+  await page.route('/api/contacts', route => route.fulfill({ json: [] }))
 
   await page.goto('/');
 
@@ -71,24 +73,27 @@ test('can navigate to about', async ({ page }) => {
 });
 
 test('can navigate to contact', async ({ page }) => {
-  await page.route('/api/contacts', route => route.fulfill({json: [
-    {
-      id: 'abcdef_gid',
-      avatar:
-        "https://placecats.com/200/200",
-      first: "Fname",
-      last: "Lname",
-    },  
-  ]}))
+  await page.route('/api/contacts', route => route.fulfill({
+    json: [
+      {
+        id: 'abcdef_gid',
+        avatar:
+          "https://placecats.com/200/200",
+        first: "Fname",
+        last: "Lname",
+      },
+    ]
+  }))
 
-  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({json:
+  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({
+    json:
     {
       id: 'abcdef_gid',
       avatar: "https://placecats.com/200/200",
       first: "Fname",
       last: "Lname",
       notes: "Something special about this contact"
-    },  
+    },
   }))
 
   await page.goto('/');
@@ -102,19 +107,21 @@ test('can navigate to contact', async ({ page }) => {
 });
 
 test('should show spinner while opening contact', async ({ page }) => {
-  await page.route('/api/contacts', route => route.fulfill({json: []}))
+  await page.route('/api/contacts', route => route.fulfill({ json: [] }))
 
   await page.route('/api/contacts/abcdef_gid', async route => {
     //await new Promise(resolve => {setTimeout(resolve, 5000)});
-    return route.fulfill({json:
-    {
-      id: 'abcdef_gid',
-      avatar: "https://placecats.com/200/200",
-      first: "Fname",
-      last: "Lname",
-      notes: "Something special about this contact"
-    },  
-  })});
+    return route.fulfill({
+      json:
+      {
+        id: 'abcdef_gid',
+        avatar: "https://placecats.com/200/200",
+        first: "Fname",
+        last: "Lname",
+        notes: "Something special about this contact"
+      },
+    })
+  });
 
   await page.goto('/contacts/abcdef_gid');
 
@@ -137,5 +144,37 @@ test('should show error on fetching a contact', async ({ page }) => {
 
   await expect(page.locator("div#contact")).toContainText(/Error fetching contact/)
 });
+
+test('can edit contact', async ({ page }) => {
+  await page.route('/api/contacts', route => route.fulfill({
+    json: [
+      {
+        id: 'abcdef_gid',
+        avatar:
+          "https://placecats.com/200/200",
+        first: "Fname",
+        last: "Lname",
+      },
+    ]
+  }))
+
+  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({
+    json:
+    {
+      id: 'abcdef_gid',
+      avatar: "https://placecats.com/200/200",
+      first: "Fname",
+      last: "Lname",
+      notes: "Something special about this contact"
+    },
+  }))
+
+  await page.goto('/contacts/abcdef_gid');
+
+  await page.locator("div#contact button").getByText("Edit").click()
+
+  await expect(page.locator("div#contact")).toContainText(/Error fetching contact/)
+});
+
 
 
