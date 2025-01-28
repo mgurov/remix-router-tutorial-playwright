@@ -121,34 +121,18 @@ test('can navigate to contact', async ({ page }) => {
 });
 
 test('should show error on fetching a contact', async ({ page }) => {
-  await page.route('/api/contacts', route => route.fulfill({json: [
-    {
-      id: 'abcdef_gid',
-      avatar:
-        "https://placecats.com/200/200",
-      first: "Fname",
-      last: "Lname",
-    },  
-  ]}))
-
-  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({json:
-    {
-      id: 'abcdef_gid',
-      avatar: "https://placecats.com/200/200",
-      first: "Fname",
-      last: "Lname",
-      notes: "Something special about this contact"
-    },  
+  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({
+    status: 500,
+    body: "Computer says No."
   }))
 
-  await page.goto('/');
+  await page.goto('/contacts/abcdef_gid');
 
   await page.locator("div#sidebar").getByText("Fname Lname").click()
 
   await page.waitForURL('/contacts/abcdef_gid')
 
-  await expect(page.locator("div#contact")).toContainText("Fname Lname")
-  await expect(page.locator("div#contact")).toContainText("Something special about this contact")
+  await expect(page.locator("div#contact")).toContainText("Computer says No.")
 });
 
 

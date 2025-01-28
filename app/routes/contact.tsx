@@ -3,23 +3,35 @@ import type { Route } from "./+types/contact"
 
 import type { ContactRecord } from "../data";
 
-export async function clientLoader({params}: Route.LoaderArgs ) {
+export async function clientLoader({ params }: Route.LoaderArgs): Promise<LoaderResponse> {
   const response = await fetch(`/api/contacts/${params.contactId}`);
   if (response.status === 200) {
     const contact = await response.json() as ContactRecord
     return { contact };
   } else {
-    return { contact: null, error: `Unexpected status code ${response.status} ${response.statusText}` }
+    return { error: `Unexpected status code ${response.status} ${response.statusText}` }
   }
-
 }
 
-export default function Contact({loaderData}: Route.ComponentProps) {
-  const {contact} = loaderData;
+type LoaderResponse = {
+  contact: ContactRecord
+} | {
+  error: string
+};
 
-  // if (!contact) {
-  //   return null;
-  // }
+export default function Contact({ loaderData }: Route.ComponentProps) {
+
+  if ("error" in loaderData) {
+    const { error } = loaderData;
+
+    if (error) {
+      return <p>
+        <i>Error fetching contact: {error}</i>
+      </p>;
+    }
+  }
+
+  const { contact } = loaderData;
 
   return (
     <div id="contact">
