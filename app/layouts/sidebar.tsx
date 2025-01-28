@@ -3,7 +3,8 @@ import { Form, Link, Outlet } from "react-router";
 import type { Route } from "./+types/sidebar";
 
 export async function clientLoader() {
-  const contacts = await fetch('/api/contacts')
+  const response = await fetch('/api/contacts')
+  const contacts = await response.json()
   return { contacts };
 }
 
@@ -11,6 +12,8 @@ export default function SidebarLayout({
   loaderData,
 }: Route.ComponentProps) {
   const { contacts } = loaderData;
+
+  console.log('loaded', contacts);
 
   return (
     <>
