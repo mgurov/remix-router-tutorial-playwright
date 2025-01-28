@@ -28,7 +28,7 @@ test('can open about', async ({ page }) => {
 test('can navigate to about', async ({ page }) => {
   await page.goto('/');
 
-  await page.locator("div#sidebar").getByTestId("link-to-about").click()
+  await page.locator("div#sidebar").getByText("React Router Contacts").click()
 
   await page.waitForURL('/about')
 
