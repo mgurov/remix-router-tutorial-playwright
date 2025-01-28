@@ -16,8 +16,7 @@ test('can see contacts on the side bar', async ({ page }) => {
 
   await page.route('/api/contacts', route => route.fulfill({json: [
     {
-      avatar:
-        "https://sessionize.com/image/124e-400o400o2-wHVdAuNaxi8KJrgtN3ZKci.jpg",
+      avatar: "https://placecats.com/200/200",
       first: "Shruti",
       last: "Kapoor",
     },  
@@ -86,7 +85,7 @@ test('can navigate to contact', async ({ page }) => {
     {
       id: 'abcdef_gid',
       avatar:
-        "https://sessionize.com/image/124e-400o400o2-wHVdAuNaxi8KJrgtN3ZKci.jpg",
+        "https://placecats.com/200/200",
       first: "Shruti",
       last: "Kapoor",
     },  
