@@ -24,3 +24,14 @@ test('can open about', async ({ page }) => {
   await expect(page.getByText("About React Router Contacts")).toBeVisible();
 });
 
+
+test('can navigate to about', async ({ page }) => {
+  await page.goto('/');
+
+  await page.locator("div#sidebar").getByTestId("link-to-about").click()
+
+  await page.waitForURL('/about')
+
+  await expect(page.getByText("About React Router Contacts")).toBeVisible();
+});
+
