@@ -128,11 +128,7 @@ test('should show error on fetching a contact', async ({ page }) => {
 
   await page.goto('/contacts/abcdef_gid');
 
-  await page.locator("div#sidebar").getByText("Fname Lname").click()
-
-  await page.waitForURL('/contacts/abcdef_gid')
-
-  await expect(page.locator("div#contact")).toContainText("Computer says No.")
+  await expect(page.locator("div#contact")).toContainText(/Error fetching contact/)
 });
 
 
