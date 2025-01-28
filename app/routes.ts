@@ -7,4 +7,5 @@ export default [
         route("contacts/:contactId", "routes/contact.tsx"),
     ]),
     route("about", "routes/about.tsx"),
+    route("contacts/:contactId/edit", "routes/edit-contact.tsx"),
 ] satisfies RouteConfig;
