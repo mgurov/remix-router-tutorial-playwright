@@ -1,4 +1,4 @@
-import { Form, Link, Outlet } from "react-router";
+import { Form, Link, Outlet, } from "react-router";
 //import { getContacts } from "../data";
 import type { Route } from "./+types/sidebar";
 

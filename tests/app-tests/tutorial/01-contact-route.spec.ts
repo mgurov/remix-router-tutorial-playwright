@@ -41,6 +41,8 @@ test('No contacts on the side bar when contact list is empty', async ({ page }) 
 
 
 test('can open contact', async ({ page }) => {
+  await page.route('/api/contacts', route => route.fulfill({json: []}))
+
   await page.goto('/contacts/1');
 
   await expect(page.getByText("React Router Contacts")).toBeVisible();
@@ -55,6 +57,8 @@ test('can open about', async ({ page }) => {
 
 
 test('can navigate to about', async ({ page }) => {
+  await page.route('/api/contacts', route => route.fulfill({json: []}))
+  
   await page.goto('/');
 
   await page.locator("div#sidebar").getByText("React Router Contacts").click()
