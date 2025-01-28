@@ -20,7 +20,7 @@ test('can see contacts on the side bar', async ({ page }) => {
       first: "Fname",
       last: "Lname",
     },  
-  ]}))
+  ]}));
 
   await page.goto('/');
 
