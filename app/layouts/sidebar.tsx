@@ -4,16 +4,21 @@ import type { Route } from "./+types/sidebar";
 
 export async function clientLoader() {
   const response = await fetch('/api/contacts')
-  const contacts = await response.json()
+  const contacts = await response.json() as ContactDto[]
   return { contacts };
+}
+
+type ContactDto = {
+  id: string;
+  first?: string;
+  last?: string;
+  favorite?: boolean;
 }
 
 export default function SidebarLayout({
   loaderData,
 }: Route.ComponentProps) {
   const { contacts } = loaderData;
-
-  console.log('loaded', contacts);
 
   return (
     <>
