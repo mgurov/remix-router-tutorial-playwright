@@ -1,16 +1,25 @@
 import { Form } from "react-router";
+import type { Route } from "./+types/contact"
 
 import type { ContactRecord } from "../data";
 
-export default function Contact() {
-  const contact = {
-    first: "Your",
-    last: "Name",
-    avatar: "https://placecats.com/200/200",
-    twitter: "your_handle",
-    notes: "Some notes",
-    favorite: true,
-  };
+export async function clientLoader({params}: Route.LoaderArgs ) {
+  const response = await fetch(`/api/contacts/${params.contactId}`);
+  if (response.status === 200) {
+    const contact = await response.json() as ContactRecord
+    return { contact };
+  } else {
+    return { contact: null, error: `Unexpected status code ${response.status} ${response.statusText}` }
+  }
+
+}
+
+export default function Contact({loaderData}: Route.ComponentProps) {
+  const {contact} = loaderData;
+
+  // if (!contact) {
+  //   return null;
+  // }
 
   return (
     <div id="contact">

@@ -91,6 +91,15 @@ test('can navigate to contact', async ({ page }) => {
     },  
   ]}))
 
+  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({json:
+    {
+      id: 'abcdef_gid',
+      avatar: "https://placecats.com/200/200",
+      first: "Shruti",
+      last: "Kapoor",
+    },  
+  }))
+
   await page.goto('/');
 
   await page.locator("div#sidebar").getByText("Shruti Kapoor").click()
