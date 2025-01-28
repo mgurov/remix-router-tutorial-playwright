@@ -73,10 +73,20 @@ test('can navigate to about', async ({ page }) => {
 test('can open contact', async ({ page }) => {
   await page.route('/api/contacts', route => route.fulfill({json: []}))
 
-  await page.goto('/contacts/1');
+  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({json:
+    {
+      id: 'abcdef_gid',
+      avatar: "https://placecats.com/200/200",
+      first: "Fname",
+      last: "Lname",
+      notes: "Something special about this contact"
+    },  
+  }))
+
+  await page.goto('/contacts/abcdef_gid');
 
   await expect(page.getByText("React Router Contacts")).toBeVisible();
-  await expect(page.getByAltText("Your Name avatar")).toBeVisible();
+  await expect(page.getByAltText("Fname Lname avatar")).toBeVisible();
 });
 
 test('can navigate to contact', async ({ page }) => {
