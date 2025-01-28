@@ -17,14 +17,14 @@ test('can see contacts on the side bar', async ({ page }) => {
   await page.route('/api/contacts', route => route.fulfill({json: [
     {
       avatar: "https://placecats.com/200/200",
-      first: "Shruti",
-      last: "Kapoor",
+      first: "Fname",
+      last: "Lname",
     },  
   ]}))
 
   await page.goto('/');
 
-  await expect(page.locator("div#sidebar").getByText("Shruti Kapoor")).toBeVisible();
+  await expect(page.locator("div#sidebar").getByText("Fname Lname")).toBeVisible();
 
 });
 
@@ -86,8 +86,8 @@ test('can navigate to contact', async ({ page }) => {
       id: 'abcdef_gid',
       avatar:
         "https://placecats.com/200/200",
-      first: "Shruti",
-      last: "Kapoor",
+      first: "Fname",
+      last: "Lname",
     },  
   ]}))
 
@@ -95,17 +95,19 @@ test('can navigate to contact', async ({ page }) => {
     {
       id: 'abcdef_gid',
       avatar: "https://placecats.com/200/200",
-      first: "Shruti",
-      last: "Kapoor",
+      first: "Fname",
+      last: "Lname",
+      notes: "Something special about this contact"
     },  
   }))
 
   await page.goto('/');
 
-  await page.locator("div#sidebar").getByText("Shruti Kapoor").click()
+  await page.locator("div#sidebar").getByText("Fname Lname").click()
 
   await page.waitForURL('/contacts/abcdef_gid')
 
-  await expect(page.getByText("About React Router Contacts")).toBeVisible();
+  await expect(page.locator("div#contact")).toContainText("Fname Lname")
+  await expect(page.locator("div#contact")).toContainText("Something special about this contact")
 });
 
