@@ -176,8 +176,10 @@ test('can edit contact', async ({ page }) => {
   await expect(page.locator("#contact-form").getByLabel('Avatar URL')).toHaveValue("https://placecats.com/200/200")
 
   await expect(page.locator("#contact-form").getByLabel('Notes')).toHaveValue("Something special about this contact")
+
+  await page.locator("#contact-form").getByLabel('Notes').fill("Notes changed")
+
+  await page.locator("#contact-form button").getByText("Save").click()
+
+  await page.waitForURL('/contacts/abcdef_gid');
 });
-
-
-
-
