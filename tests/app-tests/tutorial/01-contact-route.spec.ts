@@ -174,7 +174,10 @@ test('can edit contact', async ({ page }) => {
   await page.locator("div#contact button").getByText("Edit").click()
 
   await expect(page.locator("#contact-form").getByLabel('Avatar URL')).toHaveValue("https://placecats.com/200/200")
+
+  await expect(page.locator("#contact-form").getByLabel('Notes')).toHaveValue("Something special about this contact")
 });
+
 
 
 
