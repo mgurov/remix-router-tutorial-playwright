@@ -4,8 +4,12 @@ import type { Route } from "./+types/sidebar";
 
 export async function clientLoader() {
   const response = await fetch('/api/contacts')
-  const contacts = await response.json() as ContactDto[]
-  return { contacts };
+  if (response.status === 200) {
+    const contacts = await response.json() as ContactDto[]
+    return { contacts };
+  } else {
+    return { contacts: [], error: `Unexpected status code ${response.status} ${response.statusText}` }
+  }
 }
 
 type ContactDto = {
@@ -18,7 +22,7 @@ type ContactDto = {
 export default function SidebarLayout({
   loaderData,
 }: Route.ComponentProps) {
-  const { contacts } = loaderData;
+  const { contacts, error } = loaderData;
 
   return (
     <>
@@ -66,9 +70,12 @@ export default function SidebarLayout({
               ))}
             </ul>
           ) : (
-            <p>
-              <i>No contacts</i>
-            </p>
+            error ? <p>
+              <i>Error fetching contacts: {error}</i>
+            </p> :
+              <p>
+                <i>No contacts</i>
+              </p>
           )}
         </nav>
       </div>

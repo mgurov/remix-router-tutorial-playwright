@@ -39,6 +39,19 @@ test('No contacts on the side bar when contact list is empty', async ({ page }) 
 
 });
 
+test('should show inline error when failed loading contacts', async ({ page }) => {
+
+  await page.route('/api/contacts', route => route.fulfill({
+    status: 404,
+    body: "No contacts on this server",
+  }))
+
+  await page.goto('/');
+
+  await expect(page.locator("div#sidebar")).toContainText("Error fetching contacts")
+
+});
+
 
 test('can open contact', async ({ page }) => {
   await page.route('/api/contacts', route => route.fulfill({json: []}))
@@ -58,7 +71,7 @@ test('can open about', async ({ page }) => {
 
 test('can navigate to about', async ({ page }) => {
   await page.route('/api/contacts', route => route.fulfill({json: []}))
-  
+
   await page.goto('/');
 
   await page.locator("div#sidebar").getByText("React Router Contacts").click()
