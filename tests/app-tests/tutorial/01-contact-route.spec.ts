@@ -1,15 +1,44 @@
 import test, { expect } from "@playwright/test";
 
 test('can open root page', async ({ page }) => {
+
+  await page.route('/api/contacts', route => route.fulfill({json: []}))
+
   await page.goto('/');
 
   await expect(page.getByText("React Router Contacts")).toBeVisible();
 
-  await expect(page.getByText("Alex Anderson")).toBeVisible();
-
   await expect(page.getByTestId("index-page-hero")).toBeVisible();
 
 });
+
+test('can see contacts on the side bar', async ({ page }) => {
+
+  await page.route('/api/contacts', route => route.fulfill({json: [
+    {
+      avatar:
+        "https://sessionize.com/image/124e-400o400o2-wHVdAuNaxi8KJrgtN3ZKci.jpg",
+      first: "Shruti",
+      last: "Kapoor",
+    },  
+  ]}))
+
+  await page.goto('/');
+
+  await expect(page.locator("div#sidebar").getByText("Shruti Kapoor")).toBeVisible();
+
+});
+
+test('No contacts on the side bar when contact list is empty', async ({ page }) => {
+
+  await page.route('/api/contacts', route => route.fulfill({json: []}))
+
+  await page.goto('/');
+
+  await expect(page.locator("div#sidebar")).toContainText("No contacts")
+
+});
+
 
 test('can open contact', async ({ page }) => {
   await page.goto('/contacts/1');
