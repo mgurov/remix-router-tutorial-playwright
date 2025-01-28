@@ -70,25 +70,6 @@ test('can navigate to about', async ({ page }) => {
   await expect(page.getByText("About React Router Contacts")).toBeVisible();
 });
 
-test('can open contact', async ({ page }) => {
-  await page.route('/api/contacts', route => route.fulfill({json: []}))
-
-  await page.route('/api/contacts/abcdef_gid', route => route.fulfill({json:
-    {
-      id: 'abcdef_gid',
-      avatar: "https://placecats.com/200/200",
-      first: "Fname",
-      last: "Lname",
-      notes: "Something special about this contact"
-    },  
-  }))
-
-  await page.goto('/contacts/abcdef_gid');
-
-  await expect(page.getByText("React Router Contacts")).toBeVisible();
-  await expect(page.getByAltText("Fname Lname avatar")).toBeVisible();
-});
-
 test('can navigate to contact', async ({ page }) => {
   await page.route('/api/contacts', route => route.fulfill({json: [
     {
@@ -119,6 +100,32 @@ test('can navigate to contact', async ({ page }) => {
   await expect(page.locator("div#contact")).toContainText("Fname Lname")
   await expect(page.locator("div#contact")).toContainText("Something special about this contact")
 });
+
+test('should show spinner while opening contact', async ({ page }) => {
+  await page.route('/api/contacts', route => route.fulfill({json: []}))
+
+  await page.route('/api/contacts/abcdef_gid', async route => {
+    //await new Promise(resolve => {setTimeout(resolve, 5000)});
+    return route.fulfill({json:
+    {
+      id: 'abcdef_gid',
+      avatar: "https://placecats.com/200/200",
+      first: "Fname",
+      last: "Lname",
+      notes: "Something special about this contact"
+    },  
+  })});
+
+  await page.goto('/contacts/abcdef_gid');
+
+  //await page.waitForTimeout(500);
+
+  await expect(page.locator("#loading-splash")).toBeVisible();
+  await expect(page.locator("#loading-splash")).toContainText(/Loading,/);
+
+  await expect(page.getByAltText("Fname Lname avatar")).toBeVisible();
+});
+
 
 test('should show error on fetching a contact', async ({ page }) => {
   await page.route('/api/contacts/abcdef_gid', route => route.fulfill({
