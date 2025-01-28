@@ -20,7 +20,6 @@ export default [
     },
     rules: {
       "@typescript-eslint/no-floating-promises": "error",
-      "react/react-in-jsx-scope": "off",
     }
   }
 ];
