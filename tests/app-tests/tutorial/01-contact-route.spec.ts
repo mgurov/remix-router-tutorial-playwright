@@ -4,6 +4,8 @@ test('can open root page', async ({ page }) => {
   await page.goto('/');
 
   await expect(page.getByText("React Router Contacts")).toBeVisible();
+
+  await expect(page.getByText("Alex Anderson")).toBeVisible();
 });
 
 test('can open contact', async ({ page }) => {
