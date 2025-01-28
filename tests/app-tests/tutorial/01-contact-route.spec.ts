@@ -18,3 +18,9 @@ test('can open contact', async ({ page }) => {
   await expect(page.getByAltText("Your Name avatar")).toBeVisible();
 });
 
+test('can open about', async ({ page }) => {
+  await page.goto('/about');
+
+  await expect(page.getByText("About React Router Contacts")).toBeVisible();
+});
+
