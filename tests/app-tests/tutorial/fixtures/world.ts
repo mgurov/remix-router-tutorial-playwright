@@ -1,4 +1,5 @@
 import type { Page } from "@playwright/test";
+import { test as baseTest } from '@playwright/test';
 import { nextId } from "./nextId";
 
 export class World {
@@ -52,7 +53,7 @@ type ContactSpec = {
     avatar?: string,
 }
 
-class Contact {
+export class Contact {
     constructor(public id: string, private spec: ContactSpec) {
 
     }
@@ -62,7 +63,7 @@ class Contact {
     }
 
     get lastName() {
-        return this.spec.first ?? "Last_" + this.id;
+        return this.spec.last ?? "Last_" + this.id;
     }
 
     update(postData: unknown) {
@@ -85,3 +86,23 @@ class Contact {
         }
     }
 }
+
+export async function routeWorld(page: Page): Promise<World> {    
+    await page.route('/api/**/*', async (route, request) => {
+        console.warn('unmocked route', request.method(), request.url());
+        await route.abort();
+      });
+
+    const world = new World();
+
+    await world.route(page);
+
+    return world;
+}
+
+export const worldlyTest = baseTest.extend<{ world: World }>({
+  world: [async ({ page }, use) => {
+    const world = await routeWorld(page);
+    await use(world);
+  }, { auto: true }],
+});
