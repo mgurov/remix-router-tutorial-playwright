@@ -83,7 +83,7 @@ function RenderEditContact({
 
   return (
     <Form key={contact.id} id="contact-form" method="post" onSubmit={handleSubmit}>
-      {errorUpdating && <p>Something went wrong</p>}
+      {errorUpdating && <p style={{color: 'red'}}>Something went wrong</p>}
       <p>
         <span>Name</span>
         <input

@@ -82,7 +82,7 @@ export class Contact {
         return {
             ...this.toListJson(),
             avatar: this.spec.avatar ?? "https://placecats.com/200/200",
-            notes: this.spec.notes ?? null,
+            notes: this.spec.notes ?? "no notes",
         }
     }
 }

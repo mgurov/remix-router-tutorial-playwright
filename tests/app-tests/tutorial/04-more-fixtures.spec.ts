@@ -100,7 +100,7 @@ test.describe("contact view", () => {
     await page.goto('/contacts/' + contact.id);
 
     //NB: don't use this at home.
-    await page.waitForTimeout(500);
+    //await page.waitForTimeout(500);
 
     await expect(page.locator("#loading-splash")).toBeVisible();
     await expect(page.locator("#loading-splash")).toContainText(/Loading,/);

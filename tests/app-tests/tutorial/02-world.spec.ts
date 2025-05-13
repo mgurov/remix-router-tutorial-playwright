@@ -98,20 +98,23 @@ test.describe("contact view", () => {
     const world = await routeWorld(page);
 
     const contact = world.givenContact()
-  
-    // await page.route('/api/contacts/abcdef_gid', async route => {
-    //   //await new Promise(resolve => {setTimeout(resolve, 5000)});
-    //   return route.fulfill({
-    //     json:
-    //     {
-    //       id: 'abcdef_gid',
-    //       avatar: "https://placecats.com/200/200",
-    //       first: "Fname",
-    //       last: "Lname",
-    //       notes: "Something special about this contact"
-    //     },
-    //   })
-    // });
+
+    // TODO: fix 
+
+
+    await page.route(`/api/contacts/${contact.id}`, async route => {
+      //await new Promise(resolve => {setTimeout(resolve, 5000)});
+      return route.fulfill({
+        json:
+        {
+          id: 'abcdef_gid',
+          avatar: "https://placecats.com/200/200",
+          first: "Fname",
+          last: "Lname",
+          notes: "Something special about this contact"
+        },
+      })
+    });
   
     await page.goto('/contacts/' + contact.id);
   
