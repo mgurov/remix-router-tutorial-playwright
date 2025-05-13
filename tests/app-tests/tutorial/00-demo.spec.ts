@@ -37,7 +37,7 @@ test('can navigate to contact - direct dependency interception', async ({ page }
 })
 
 
-
+//TODO: more appPage
 test('can navigate to contact - worldly version', async ({ page, world, appPage }) => {
 
   const contact = world.givenContact({
@@ -89,21 +89,33 @@ test('should show error on edited contact saving', async ({ page, world }) => {
 
 test('should show spinner while opening contact', async ({ page, world }) => {
 
-    const contact = world.givenContact()
+  const contact = world.givenContact()
 
-    const releaseRequest = new Deferred()
+  const releaseRequest = new Deferred()
 
-    await page.route('/api/contacts/' + contact.id, async route => {
-      await releaseRequest.promise;
-      return route.fallback();
-    });
-
-    await page.goto('/contacts/' + contact.id);
-
-    await expect(page.locator("#loading-splash")).toBeVisible();
-    await expect(page.locator("#loading-splash")).toContainText(/Loading,/);
-
-    releaseRequest.resolve("");
-
-    await expect(page.getByAltText(/avatar/)).toBeVisible();
+  await page.route('/api/contacts/' + contact.id, async route => {
+    await releaseRequest.promise;
+    return route.fallback();
   });
+
+  await page.goto('/contacts/' + contact.id);
+
+  await expect(page.locator("#loading-splash")).toBeVisible();
+  await expect(page.locator("#loading-splash")).toContainText(/Loading,/);
+
+  releaseRequest.resolve("");
+
+  await expect(page.getByAltText(/avatar/)).toBeVisible();
+});
+
+
+test('shows last call - worldly version', async ({ world, appPage }) => {
+
+  const contact = world.givenContact({
+    lastContact: "2022-12-12T08:05:13Z",
+  })
+
+  const contactSection = await appPage.openContact(contact);
+  await expect(contactSection.lastContact).toContainText('2022-12-12T08:05:13Z')
+
+});

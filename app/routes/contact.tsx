@@ -2,6 +2,7 @@ import { Form } from "react-router";
 import type { Route } from "./+types/contact"
 
 import type { ContactRecord } from "../data";
+import { useQuery } from "@tanstack/react-query";
 
 export async function clientLoader({ params }: Route.LoaderArgs): Promise<LoaderResponse> {
   const response = await fetch(`/api/contacts/${params.contactId}`);
@@ -67,6 +68,8 @@ export default function Contact({ loaderData }: Route.ComponentProps) {
           ) : null}
   
           {contact.notes ? <p>{contact.notes}</p> : null}
+
+          <LastContact contact={contact} />
   
           <div>
             <Form action="edit">
@@ -92,6 +95,30 @@ export default function Contact({ loaderData }: Route.ComponentProps) {
       </div>
     );
   }
+}
+
+async function fetchCallsByContact(contactId: string): Promise<Array<{timestamp: string}>> {
+  const response = await fetch(`/api/calls/by-contact/${contactId}`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json() as Promise<Array<{timestamp: string}>>;
+}
+
+function LastContact({contact}: {contact: Pick<ContactRecord, "id">}) {
+
+  const {data, error, isLoading} = useQuery({ 
+    queryKey: ['contact-calls', contact.id],
+    queryFn: () => fetchCallsByContact(contact.id)
+  })
+
+   if (isLoading) return <div>Loading calls...</div>;
+  if (error) return <div>An error occurred fetching calls: {error.message}</div>;
+  if (data && data?.length > 0) {
+    return <div data-testid="last-contact">Last Contact: {data[0].timestamp}</div>
+  }
+
+  return <div data-testid="last-contact">Last Contact: N/A</div>
 }
 
 function Favorite({

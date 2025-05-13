@@ -7,6 +7,9 @@ import {
 import type { Route } from "./+types/root";
 
 import appStylesHref from "./app.css?url";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient()
 
 export default function App() {
   return <Outlet />;
@@ -24,7 +27,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <link rel="stylesheet" href={appStylesHref} />
       </head>
       <body>
-        {children}
+         <QueryClientProvider client={queryClient}>
+            {children}
+         </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

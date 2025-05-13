@@ -4,6 +4,7 @@ import { nextId } from "./nextId";
 
 export class World {
     contacts: Contact[] = [];
+    calls: Call[] = [];
 
     async route(page: Page) {
           await page.route('/api/contacts', route => route.fulfill({ json: this.contacts.map(c => c.toListJson()) }))
@@ -36,11 +37,31 @@ export class World {
             console.warn('contact API route not implemented', request.method(), path);
             await route.fulfill({ status: 555, body: 'route not implemented' });
           })
+
+          await page.route('/api/calls/by-contact/*', async(route, request) => {
+            const { pathname: path } = new URL(request.url());
+            const callByContactIdMatch = path.match('/api/calls/by-contact/([^/]+)$');
+            if (callByContactIdMatch) {
+                const contactId = callByContactIdMatch[1];
+                const matchedCalls = this.calls.filter(c => c.associatedContactId === contactId) 
+                return await route.fulfill({json: matchedCalls.map(c => c.toListJson())})
+            }
+
+            console.warn('contact API route not implemented', request.method(), path);
+            await route.fulfill({ status: 555, body: 'route not implemented' });
+
+          })
+
     }
 
     givenContact(spec: ContactSpec = {}): Contact {
         const contact = new Contact(nextId(), spec);
         this.contacts.push(contact);
+        if (spec.lastContact) {
+            this.calls.push(
+                new Call(nextId(), spec.lastContact, contact.id)
+            )
+        }
         return contact;
     }
 
@@ -51,6 +72,7 @@ type ContactSpec = {
     last?: string,
     notes?: string,
     avatar?: string,
+    lastContact?: string,
 }
 
 export class Contact {
@@ -83,6 +105,22 @@ export class Contact {
             ...this.toListJson(),
             avatar: this.spec.avatar ?? "https://placecats.com/200/200",
             notes: this.spec.notes ?? "no notes",
+        }
+    }
+}
+
+export class Call {
+    constructor(
+        public id: string, 
+        public timestamp: string,
+        public associatedContactId: string,
+    ) {}
+
+    toListJson() {
+        return {
+            id: this.id,
+            timestamp: this.timestamp,
+            associatedContactId: this.associatedContactId,
         }
     }
 }
