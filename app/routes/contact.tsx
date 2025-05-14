@@ -67,7 +67,7 @@ export default function Contact({ loaderData }: Route.ComponentProps) {
             </p>
           ) : null}
   
-          {contact.notes ? <p>{contact.notes}</p> : null}
+          {contact.notes ? <p data-testid="notes">{contact.notes}</p> : null}
 
           <LastContact contact={contact} />
   

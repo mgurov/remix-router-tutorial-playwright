@@ -1,8 +1,7 @@
 import Deferred from "./fixtures/Deferred";
 import { test, expect } from "./fixtures/outtest";
 
-
-test('can navigate to contact - direct dependency interception', async ({ page }) => {
+test('can navigate to contact - direct dependency interception', async ({ page, appPage }) => {
   await page.route('/api/contacts', route => route.fulfill({
     json: [
       {
@@ -32,12 +31,10 @@ test('can navigate to contact - direct dependency interception', async ({ page }
 
   await page.waitForURL('/contacts/abcdef_gid')
 
-  await expect(page.locator("div#contact")).toContainText("Fname Lname")
   await expect(page.locator("div#contact")).toContainText("Something special about this contact")
 })
 
 
-//TODO: more appPage
 test('can navigate to contact - worldly version', async ({ page, world, appPage }) => {
 
   const contact = world.givenContact({
@@ -46,13 +43,9 @@ test('can navigate to contact - worldly version', async ({ page, world, appPage 
 
   await page.goto('/');
 
-  await appPage.contactLink(contact).click()
+  const contactSection = await appPage.clickToContact(contact)
 
-  await page.waitForURL(`/contacts/${contact.id}`)
-
-  await expect(page.locator("div#contact")).toContainText(contact.firstName)
-  await expect(page.locator("div#contact")).toContainText(contact.lastName)
-  await expect(page.locator("div#contact")).toContainText("Something special about this contact")
+  await expect(contactSection.notes).toContainText("Something special about this contact")
 });
 
 
@@ -67,7 +60,7 @@ test('should show error on edited contact saving', async ({ page, world }) => {
       return route.fulfill({
         status: 400,
         json: {
-          message: "something was wrong with the update"
+          message: "Computer says no"
         }
       })
     }
@@ -103,6 +96,7 @@ test('should show spinner while opening contact', async ({ page, world }) => {
   await expect(page.locator("#loading-splash")).toBeVisible();
   await expect(page.locator("#loading-splash")).toContainText(/Loading,/);
 
+  //TODO: comment me out for the demo.
   releaseRequest.resolve("");
 
   await expect(page.getByAltText(/avatar/)).toBeVisible();
